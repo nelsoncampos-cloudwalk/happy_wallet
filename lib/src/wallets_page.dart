@@ -28,43 +28,11 @@ class _WalletsPageState extends State<WalletsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          "Happy Wallet 😁",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 24,
-          ),
-        ),
+        title: _AppBarTitle(),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            BlocBuilder<WalletsCubit, WalletsState>(
-              bloc: cubit,
-              builder: (context, state) {
-                return Flexible(
-                  child: ListView.builder(
-                    itemCount: state.maybeWhen(
-                      loaded: (wallets) => wallets.length,
-                      orElse: () => 0,
-                    ),
-                    itemBuilder: (context, index) {
-                      return state.maybeWhen(
-                        loaded: (wallets) => _Wallet(
-                          index: index,
-                          credentials: wallets[index],
-                        ),
-                        orElse: () => SizedBox(),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
+        child: _WalletsList(
+          cubit: cubit,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -78,9 +46,7 @@ class _WalletsPageState extends State<WalletsPage> {
           ),
           const SizedBox(width: 8),
           FloatingActionButton(
-            onPressed: () {
-              cubit.createNewWallet();
-            },
+            onPressed: () => cubit.createNewWallet(),
             child: Icon(CupertinoIcons.add),
           ),
         ],
@@ -89,21 +55,69 @@ class _WalletsPageState extends State<WalletsPage> {
   }
 }
 
-class _Wallet extends StatefulWidget {
+class _AppBarTitle extends StatelessWidget {
+  const _AppBarTitle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      "Happy Wallet 😁",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 24,
+      ),
+    );
+  }
+}
+
+class _WalletsList extends StatelessWidget {
+  final WalletsCubit cubit;
+  const _WalletsList({Key? key, required this.cubit}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<WalletsCubit, WalletsState>(
+      bloc: cubit,
+      builder: (context, state) {
+        return Flexible(
+          child: ListView.builder(
+            itemCount: state.maybeWhen(
+              loaded: (wallets) => wallets.length,
+              orElse: () => 0,
+            ),
+            itemBuilder: (context, index) {
+              return state.maybeWhen(
+                loaded: (wallets) => _WalletItem(
+                  index: index,
+                  credentials: wallets[index],
+                ),
+                orElse: () => SizedBox(),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _WalletItem extends StatefulWidget {
   final Credentials credentials;
   final int index;
-  const _Wallet({
+  const _WalletItem({
     Key? key,
     required this.credentials,
     required this.index,
   }) : super(key: key);
 
   @override
-  State<_Wallet> createState() => _WalletState();
+  State<_WalletItem> createState() => _WalletItemState();
 }
 
-class _WalletState extends State<_Wallet> {
+class _WalletItemState extends State<_WalletItem> {
   EthereumAddress? ethAddress;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -155,6 +169,32 @@ class _WalletState extends State<_Wallet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ActionButtons extends StatelessWidget {
+  final WalletsCubit cubit;
+  const _ActionButtons({Key? key, required this.cubit}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        FloatingActionButton(
+          onPressed: () {},
+          child: Icon(CupertinoIcons.arrow_swap),
+        ),
+        const SizedBox(width: 8),
+        FloatingActionButton(
+          onPressed: () {
+            cubit.createNewWallet();
+          },
+          child: Icon(CupertinoIcons.add),
+        ),
+      ],
     );
   }
 }

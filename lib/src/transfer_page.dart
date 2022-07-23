@@ -1,20 +1,18 @@
-import '../../../brlc.g.dart';
+import 'proxys/erc20/brlc/brlc_proxy.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import '../brlc.g.dart';
 import 'cubits/transfer/transfer_cubit.dart';
 
 class TransferPage extends StatefulWidget {
   final Credentials credentials;
-  final Brlc brlc;
+  final BrlcProxy brlcProxy;
   const TransferPage({
     Key? key,
-    required this.brlc,
+    required this.brlcProxy,
     required this.credentials,
   }) : super(key: key);
 
@@ -32,7 +30,7 @@ class _TransferPageState extends State<TransferPage> {
   void initState() {
     cubit = TransferCubit(
       credentials: widget.credentials,
-      brlc: widget.brlc,
+      brlcProxy: widget.brlcProxy,
     );
     super.initState();
   }

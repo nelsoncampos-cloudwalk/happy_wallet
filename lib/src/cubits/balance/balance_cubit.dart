@@ -1,6 +1,6 @@
-import '../../../brlc.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:happy_wallet/src/proxys/erc20/brlc/brlc_proxy.dart';
 import 'package:web3dart/web3dart.dart';
 
 part 'balance_cubit.freezed.dart';
@@ -8,19 +8,20 @@ part 'balance_state.dart';
 
 class BalanceCubit extends Cubit<BalanceState> {
   final Credentials credentials;
-  final Brlc brlc;
+  final BrlcProxy brlcProxy;
   BalanceCubit({
     required this.credentials,
-    required this.brlc,
+    required this.brlcProxy,
   }) : super(BalanceState.initial());
 
   Future<void> balanceOfWallet() async {
     try {
       emit(BalanceState.loading());
       final account = await credentials.extractAddress();
-      final currentBalanceBigInt = await brlc.balanceOf(account);
-      final currentBalance = currentBalanceBigInt.toInt() / 1000000;
-      final symbol = await brlc.symbol();
+      final currentBalance = await brlcProxy.balanceOf(
+        address: account.hex,
+      );
+      final symbol = await brlcProxy.symbol();
       emit(BalanceState.success(
         balance: currentBalance,
         symbol: symbol,

@@ -1,8 +1,9 @@
-import '../../../brlc.g.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:happy_wallet/src/proxys/erc20/brlc/brlc_proxy.dart';
+import 'package:happy_wallet/src/proxys/erc20/brlc/service/brlc.g.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:http/http.dart';
@@ -27,6 +28,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late final Brlc brlc;
+  late final BrlcProxy brlcProxy;
   late final BalanceCubit cubit;
 
   @override
@@ -39,9 +41,11 @@ class _HomeState extends State<Home> {
       chainId: 2009,
     );
 
+    brlcProxy = BrlcProxy(brlc: brlc);
+
     cubit = BalanceCubit(
       credentials: widget.credentials,
-      brlc: brlc,
+      brlcProxy: brlcProxy,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -138,7 +142,7 @@ class _HomeState extends State<Home> {
                 builder: (_) {
                   return TransferPage(
                     credentials: widget.credentials,
-                    brlc: brlc,
+                    brlcProxy: brlcProxy,
                   );
                 },
               );
