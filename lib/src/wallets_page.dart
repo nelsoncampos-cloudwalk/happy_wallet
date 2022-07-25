@@ -36,21 +36,7 @@ class _WalletsPageState extends State<WalletsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          FloatingActionButton(
-            onPressed: () {},
-            child: Icon(CupertinoIcons.arrow_swap),
-          ),
-          const SizedBox(width: 8),
-          FloatingActionButton(
-            onPressed: () => cubit.createNewWallet(),
-            child: Icon(CupertinoIcons.add),
-          ),
-        ],
-      ),
+      floatingActionButton: _ActionButtons(cubit: cubit),
     );
   }
 }

@@ -23,11 +23,10 @@ class TransferCubit extends Cubit<TransferState> {
       emit(TransferState.loading());
 
       final account = await credentials.extractAddress();
-      final currentBalanceBigInt = await brlcProxy.balanceOf(
+      final currentBalance = await brlcProxy.balanceOf(
         address: account.hex,
       );
 
-      final currentBalance = currentBalanceBigInt.toInt() / 1000000;
       if (currentBalance >= amount) {
         final tx = await brlcProxy.transfer(
           from: address,
